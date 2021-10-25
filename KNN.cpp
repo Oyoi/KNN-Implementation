@@ -1,7 +1,13 @@
 #include <iostream>
-#include <string>
 #include <fstream>
 #include <vector>
+#include <cmath>
+#include <string>
+
+#define MAX_PROBABILTY 0.014516787
+#define MIN_PROBABILTY 0.00000000273674
+#define MAX_COUNT 5304407
+#define MIN_COUNT 1
 
 class Names 
 {
@@ -15,8 +21,6 @@ class Names
                 this->gender = gender;
             }
 
-        float distance;
-
         int count;
         float probability;
         std::string name;
@@ -24,71 +28,52 @@ class Names
 
 };
 
-class CSVReader 
+void read_csv_file(std::vector<Names>& dataset, std::string filename)
 {
-public:
-	CSVReader(const std::string& fileName, const std::string& delimeter = ",") :
-		fileName(fileName),
-		delimeter(delimeter)
-	{}
+    std::ifstream csv_file;
+    csv_file.open(filename);
 
-	std::vector<std::vector<std::string>> getData() {
+    while(csv_file.good())
+    {
+        std::string line;
+        getline(csv_file, line, ',');
+        int i = 0;
+        std::cin >> dataset[i].name >> dataset[i].gender >> dataset[i].count >> dataset[i].probability; 
+        i++;
+    }
 
-		std::ifstream file(this->fileName);
-		std::vector<std::vector<std::string>> data;
-		std::string line = "";
-
-		while (getline(file, line)) {
-			std::vector<std::string> tmp;
-			tmp = this->split(line, ",");
-			data.push_back(tmp);
-		}
-		file.close();
-		return data;
-	}
-
-private:
-	std::string fileName;
-	std::string delimeter;
-
-	/*
-	* Function used to split each line by the delim
-	*/
-	std::vector<std::string> split(std::string target, std::string delim)
-	{
-		std::vector<std::string> v;
-		if (!target.empty()) {
-			size_t start = 0;
-			do {
-				size_t x = target.find(delim, start);
-				// a check whether the target is found
-				if (x == -1)
-				{
-					break;
-				}
-				std::string tmp = target.substr(start, x - start);
-				v.push_back(tmp);
-				start += delim.size() + tmp.size();
-			} while (true);
-
-			v.push_back(target.substr(start));
-		}
-		return v;
-	}
-};
-
-// function used to compare two companies when sorting
-bool comparison(Names& lhs, Names& rhs) {
-	return lhs.distance < rhs.distance;
 }
 
-float euclideanDistance(Names& lhs, Names& test) 
+void normalize_count(std::vector<Names>& dataset) 
 {
-	//Come up with fast square root function
+    for(int i = 0; i < dataset.size(); i++)
+    {
+        dataset[i].count = (dataset[i].count - MIN_COUNT) / (MAX_COUNT - MIN_COUNT);
+    }
+}
+
+void normalize_probability(std::vector<Names>& dataset) 
+{
+    for(int i = 0; i < dataset.size(); i++)
+    {
+        dataset[i].probability = (dataset[i].probability - MIN_PROBABILTY) / (MAX_PROBABILTY - MIN_PROBABILTY);
+    }
+}
+
+float euclidean_distance(float p1, float p2)
+{
+    float distance;
+    distance = sqrtf( (p2 * p2) - (p1 * p1) );
+    return distance;
 }
 
 int main()
 {
+    std::vector<Names> dataset;
+    Names data1(69, 0.001, "SFDGFNP", 'M');
+    Names data2(69420, 0.69, "Jimbo", 'M');
+    dataset = {data1, data2};
+
     std::cin.get();
     return 0;
 }
