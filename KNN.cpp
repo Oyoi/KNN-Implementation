@@ -50,7 +50,7 @@ void read_data_to_file(std::vector<Names>& dataset, Names& data, const char* fil
     std::ifstream csv_file(filename);
     std::string line;
     int i = 0;
-    std::cout << std::fixed << "\n" << std::setprecision(30) << std::setw(20) << "Name" << "\t | \t" << "Gender" << "\t | \t" << "Count" << std::setw(35) << "\t | \t" << "Probrability" << "\n";
+    std::cout << std::fixed << "\n" << std::setw(10) << "Instance" << "\t | \t" << std::setprecision(30) << std::setw(20) << "Name" << "\t | \t" << "Gender" << "\t | \t" << "Count" << std::setw(35) << "\t | \t" << "Probrability" << "\n";
     while(getline(csv_file, line))
     {
         std::stringstream ss(line);
@@ -73,7 +73,7 @@ void read_data_to_file(std::vector<Names>& dataset, Names& data, const char* fil
         data.probability = (data.probability - MIN_PROBABILTY) / (MAX_PROBABILTY - MIN_PROBABILTY);
 
         dataset.push_back(data);
-        std::cout << std::fixed << std::setprecision(30) << std::setw(20) << dataset[i].name << "\t | \t" << dataset[i].gender << "\t | \t" << dataset[i].count << "\t | \t" << dataset[i].probability << "\n";
+        std::cout << std::fixed << std::setw(10) << (i + 1) << "\t | \t" << std::setprecision(30) << std::setw(20) << dataset[i].name << "\t | \t" << dataset[i].gender << "\t | \t" << dataset[i].count << "\t | \t" << dataset[i].probability << "\n";
         i++;
     }
     csv_file.close();
@@ -123,6 +123,7 @@ std::vector<int> k_nearest_neighbor(std::vector<Names> dataset, Training_Data& d
             }
         }
     }
+
     for(int i = 0; i < nearest.size(); i++)
     {
         int index = get_index(distances, nearest[i]);
@@ -151,15 +152,16 @@ void classify(std::vector<int> knn, std::vector<Names> dataset, Training_Data& v
             counter--;
         }
     }
+
     if(counter > 0)
     {
         std::cout << "\n\nTherefore, " << values.name << " is of gender: ";
-        std::cout << 'M' << "\n";
+        std::cout << 'M' << "\n\n";
     }
     else
     {
         std::cout << "\n\nTherefore, " << values.name << " is of gender: ";
-        std::cout << 'F' << "\n";
+        std::cout << 'F' << "\n\n";
     }
 }
 
@@ -168,15 +170,16 @@ int main()
     int k;
     Names data;
     std::vector<Names> dataset;
-    //Training_Data values("Kevin", 4000000, 0.0101);
+    //Training_Data values("Kevin", 1234567, 0.012345);
     Training_Data name_data;
-    std::cout << "Enter (Name, Count, Probability, k):\n";
+    std::cout << "\nEnter (Name, Count, Probability, k):\n";
     std::cin >> name_data.name >> name_data.count >> name_data.probability >> k;
-    read_data_to_file(dataset, data, "test.csv");
+    //read_data_to_file(dataset, data, "test.csv");
     //read_data_to_file(dataset, data, "notbsing.csv");
-    //read_data_to_file(dataset, data, "name_gender_dataset.csv");
+    read_data_to_file(dataset, data, "name_gender_dataset.csv");
     //classify(k_nearest_neighbor(dataset, values, 3), dataset, values);
     //classify(k_nearest_neighbor(dataset, values, 5), dataset, values);
+    //classify(k_nearest_neighbor(dataset, values, 15), dataset, values);
     classify(k_nearest_neighbor(dataset, name_data, k), dataset, name_data);
     return 0;
 }
