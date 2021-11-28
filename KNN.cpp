@@ -45,7 +45,7 @@ class Training_Data
         ~Training_Data() {}
 };
 
-void read_data_to_file(std::vector<Names>& dataset, Names& data, const char* filename)
+void read_data_from_file(std::vector<Names>& dataset, Names& data, const char* filename)
 {
     std::ifstream csv_file(filename);
     std::string line;
@@ -88,7 +88,11 @@ int get_index(std::vector<double> indices, double value)
     {
         index = it - indices.begin();
     }
-    
+    else 
+    {
+        std::cout << "Value " << value << " not found\n";
+        return -1;
+    }
     return index;
 }
 
@@ -124,14 +128,11 @@ std::vector<int> k_nearest_neighbor(std::vector<Names> dataset, Training_Data& d
         }
     }
 
+    std::cout << "\n" << data.name << "'s " << k << " nearest neighbors are:\n\n";
     for(int i = 0; i < nearest.size(); i++)
     {
         int index = get_index(distances, nearest[i]);
         indices.push_back(index);
-    }
-    std::cout << "\n" << data.name << "'s " << k << " nearest neighbors are:\n\n";
-    for(int i = 0; i < nearest.size(); i++)
-    {
         std::cout << dataset[indices[i]].name << " with distance: " << nearest[i] << "\n";
     }
     return indices;
@@ -174,12 +175,12 @@ int main()
     Training_Data name_data;
     std::cout << "\nEnter (Name, Count, Probability, k):\n";
     std::cin >> name_data.name >> name_data.count >> name_data.probability >> k;
-    //read_data_to_file(dataset, data, "test.csv");
-    //read_data_to_file(dataset, data, "notbsing.csv");
-    read_data_to_file(dataset, data, "name_gender_dataset.csv");
+    //read_data_from_file(dataset, data, "test.csv");
+    //read_data_from_file(dataset, data, "notbsing.csv");
+    read_data_from_file(dataset, data, "name_gender_dataset.csv");
     //classify(k_nearest_neighbor(dataset, values, 3), dataset, values);
     //classify(k_nearest_neighbor(dataset, values, 5), dataset, values);
     //classify(k_nearest_neighbor(dataset, values, 15), dataset, values);
     classify(k_nearest_neighbor(dataset, name_data, k), dataset, name_data);
     return 0;
-}
+} 
